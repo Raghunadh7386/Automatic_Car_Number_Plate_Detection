@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plate Recognizer | ALPR System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+      @keyframes moveRight {
+        0% { left: -150px; }
+        100% { left: 100%; }
+      }
+      @keyframes moveLeft {
+        0% { right: -150px; }
+        100% { right: 100%; }
+      }
+      .car-top { animation: moveRight 12s linear infinite; }
+      .car-bottom { animation: moveLeft 12s linear infinite; }
+      
+      .gradient-bg {
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      }
+      
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      
+      .upload-box {
+        transition: all 0.3s ease;
+      }
+      .upload-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50 font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <a href="#" class="flex items-center space-x-2">
+          <i class="fas fa-car text-blue-600 text-2xl"></i>
+          <span class="text-xl font-bold text-blue-700">PlateRecognizer</span>
+        </a>
+        <div class="space-x-6 hidden md:flex">
+          <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition">Home</a>
+          <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition">Features</a>
+          <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition">Pricing</a>
+          <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition">About</a>
+          <a href="#" class="text-blue-600 font-medium">Demo</a>
+        </div>
+        <button class="md:hidden text-blue-600 focus:outline-none">
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative gradient-bg text-white py-20 overflow-hidden">
+      <!-- Animated cars -->
+      <img src="{{ url_for('static', filename='new-car.png') }}" alt="Car" class="absolute car-top top-10 left-0 opacity-30 w-40">
+      <img src="{{ url_for('static', filename='car.png') }}" alt="Car" class="absolute car-bottom bottom-10 right-0 opacity-30 w-40 transform -scale-x-100">
+
+      <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between relative z-10">
+        <!-- Text Content -->
+        <div class="md:w-1/2 mb-12 md:mb-0 text-center md:text-left">
+          <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">
+            Advanced <span class="text-blue-300">License Plate</span> Recognition
+          </h1>
+          <p class="text-xl text-blue-100 mb-8">
+            Powerful ALPR technology powered by EasyOCR for accurate, real-time plate detection
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+            <a href="#demo" class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition duration-300 shadow-lg">
+              Try Live Demo
+            </a>
+            <a href="#features" class="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:bg-opacity-10 transition duration-300">
+              Learn More
+            </a>
+          </div>
+          
+          <div class="mt-10 flex items-center justify-center md:justify-start space-x-4">
+            <div class="flex items-center">
+              <i class="fas fa-check-circle text-blue-300 mr-2"></i>
+              <span>95% Accuracy</span>
+            </div>
+            <div class="flex items-center">
+              <i class="fas fa-bolt text-blue-300 mr-2"></i>
+              <span>Fast Processing</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upload Box -->
+        <div id="demo" class="bg-white text-gray-800 p-8 rounded-xl shadow-xl w-full max-w-md upload-box">
+          <div class="text-center mb-2">
+            <i class="fas fa-camera-retro text-blue-600 text-4xl mb-3"></i>
+            <h2 class="text-2xl font-bold mb-2">Try Our ALPR Demo</h2>
+            <p class="text-gray-600 mb-6">
+              Upload a vehicle image and see our system in action
+            </p>
+          </div>
+          <form action="/" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition" id="dropzone">
+              <i class="fas fa-cloud-upload-alt text-blue-400 text-3xl mb-2"></i>
+              <p class="text-sm text-gray-500">Drag & drop your image here</p>
+              <p class="text-xs text-gray-400 mt-1">or click to browse (JPG, PNG)</p>
+              <input type="file" name="file" accept=".jpg, .jpeg, .png" class="hidden" id="fileInput" required>
+            </div>
+            <div class="text-center">
+              <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 flex items-center justify-center">
+                <i class="fas fa-search mr-2"></i> Detect Plate
+              </button>
+            </div>
+            <p class="text-xs text-gray-400 text-center">Max file size: 3MB</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-12 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div class="p-6">
+            <div class="text-4xl font-bold text-blue-600 mb-2">95%</div>
+            <div class="text-gray-600">Accuracy Rate</div>
+          </div>
+          <div class="p-6">
+            <div class="text-4xl font-bold text-blue-600 mb-2">0.5s</div>
+            <div class="text-gray-600">Processing Time</div>
+          </div>
+          <div class="p-6">
+            <div class="text-4xl font-bold text-blue-600 mb-2">80+</div>
+            <div class="text-gray-600">Supported Languages</div>
+          </div>
+          <div class="p-6">
+            <div class="text-4xl font-bold text-blue-600 mb-2">24/7</div>
+            <div class="text-gray-600">System Uptime</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-bold text-gray-800 mb-4">Powerful Features</h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            Our ALPR system combines cutting-edge technology with user-friendly design
+          </p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+          <!-- Feature 1 -->
+          <div class="bg-white p-8 rounded-xl shadow-md feature-card transition duration-300">
+            <div class="text-blue-500 mb-4">
+              <i class="fas fa-bullseye text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">High Precision Recognition</h3>
+            <p class="text-gray-600">
+              Advanced OCR algorithms deliver industry-leading accuracy even in challenging conditions like low light or angled plates.
+            </p>
+          </div>
+          
+          <!-- Feature 2 -->
+          <div class="bg-white p-8 rounded-xl shadow-md feature-card transition duration-300">
+            <div class="text-blue-500 mb-4">
+              <i class="fas fa-tachometer-alt text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Real-Time Processing</h3>
+            <p class="text-gray-600">
+              Lightning-fast analysis with average processing times under 500ms, perfect for traffic monitoring and security applications.
+            </p>
+          </div>
+          
+          <!-- Feature 3 -->
+          <div class="bg-white p-8 rounded-xl shadow-md feature-card transition duration-300">
+            <div class="text-blue-500 mb-4">
+              <i class="fas fa-mobile-alt text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Multi-Platform Support</h3>
+            <p class="text-gray-600">
+              Deploy anywhere - from cloud servers to edge devices like Raspberry Pi and NVIDIA Jetson platforms.
+            </p>
+          </div>
+          
+          <!-- Feature 4 -->
+          <div class="bg-white p-8 rounded-xl shadow-md feature-card transition duration-300">
+            <div class="text-blue-500 mb-4">
+              <i class="fas fa-globe text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Global Plate Support</h3>
+            <p class="text-gray-600">
+              Recognize license plates from various countries with specialized models for different regions and formats.
+            </p>
+          </div>
+          
+          <!-- Feature 5 -->
+          <div class="bg-white p-8 rounded-xl shadow-md feature-card transition duration-300">
+            <div class="text-blue-500 mb-4">
+              <i class="fas fa-code text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Developer Friendly API</h3>
+            <p class="text-gray-600">
+              Simple REST API integration with comprehensive documentation and client libraries for popular languages.
+            </p>
+          </div>
+          
+          <!-- Feature 6 -->
+          <div class="bg-white p-8 rounded-xl shadow-md feature-card transition duration-300">
+            <div class="text-blue-500 mb-4">
+              <i class="fas fa-shield-alt text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Security & Privacy</h3>
+            <p class="text-gray-600">
+              On-premise processing option keeps your data secure without sending images to third-party servers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center">
+          <div class="md:w-1/2 mb-10 md:mb-0">
+            <img width="900px" src="https://tse1.mm.bing.net/th?id=OIP.RbQcwXaAAKeG0B-b77cn1wHaFj&pid=Api&P=0&h=180" 
+                 alt="EasyOCR Architecture" 
+                 class="rounded-lg shadow-xl border border-gray-200">
+          </div>
+          <div class="md:w-1/2 md:pl-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Powered by EasyOCR Technology</h2>
+            <p class="text-gray-600 mb-6">
+              Our system leverages the powerful <span class="font-semibold">EasyOCR</span> library, a deep learning-based OCR engine that supports over 80 languages. EasyOCR combines state-of-the-art text detection models with high-accuracy recognition algorithms.
+            </p>
+            
+            <div class="space-y-4">
+              <div class="flex items-start">
+                <i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                <div>
+                  <h4 class="font-semibold text-gray-800">CNN + LSTM Architecture</h4>
+                  <p class="text-gray-600 text-sm">Combines convolutional neural networks for feature extraction with LSTM for sequence modeling.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                <div>
+                  <h4 class="font-semibold text-gray-800">Pre-trained Models</h4>
+                  <p class="text-gray-600 text-sm">Utilizes models trained on millions of text samples for robust performance.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                <div>
+                  <h4 class="font-semibold text-gray-800">GPU Acceleration</h4>
+                  <p class="text-gray-600 text-sm">Optimized for CUDA-enabled GPUs for faster processing when available.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-bold text-gray-800 mb-4">How Our ALPR System Works</h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            A simple three-step process to recognize license plates with high accuracy
+          </p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8 mb-12">
+          <!-- Step 1 -->
+          <div class="bg-white p-8 rounded-xl shadow-md text-center">
+            <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-blue-600 font-bold text-xl">1</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Image Upload</h3>
+            <p class="text-gray-600">
+              User uploads a vehicle image through our web interface or API. The system accepts various image formats.
+            </p>
+          </div>
+          
+          <!-- Step 2 -->
+          <div class="bg-white p-8 rounded-xl shadow-md text-center">
+            <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-blue-600 font-bold text-xl">2</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Plate Detection</h3>
+            <p class="text-gray-600">
+              Our system locates the license plate in the image using advanced computer vision techniques.
+            </p>
+          </div>
+          
+          <!-- Step 3 -->
+          <div class="bg-white p-8 rounded-xl shadow-md text-center">
+            <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-blue-600 font-bold text-xl">3</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">OCR Processing</h3>
+            <p class="text-gray-600">
+              EasyOCR extracts the characters from the plate and returns the recognized text with confidence scores.
+            </p>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div class="flex flex-col md:flex-row">
+            <div class="md:w-1/2 p-8">
+              <h3 class="text-2xl font-bold text-gray-800 mb-4">Sample Recognition</h3>
+              <p class="text-gray-600 mb-6">
+                Here's an example of our system processing a vehicle image and accurately recognizing the license plate number.
+              </p>
+              <div class="bg-gray-100 p-4 rounded-lg">
+                <div class="font-mono text-sm">
+                  <p class="text-green-600">Plate detected with 96% confidence</p>
+                  <p class="text-blue-600 font-bold mt-2">Recognized: ABC1234</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold text-gray-800 mb-4">Our Technology Stack</h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            Built with modern technologies for performance and reliability
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
+          <div class="bg-gray-50 p-6 rounded-lg flex flex-col items-center">
+            <img src="https://cdn.worldvectorlogo.com/logos/python-5.svg" alt="Python" class="h-12 mb-3">
+            <span class="text-gray-700 font-medium">Python</span>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-lg flex flex-col items-center">
+            <img src="https://cdn.worldvectorlogo.com/logos/flask.svg" alt="Flask" class="h-12 mb-3">
+            <span class="text-gray-700 font-medium">Flask</span>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-lg flex flex-col items-center">
+            <img src="https://tse2.mm.bing.net/th?id=OIP.3x-6FHQt797yanXV4nA_IAHaFj&pid=Api&P=0&h=180" alt="EasyOCR" class="h-12 mb-3">
+            <span class="text-gray-700 font-medium">EasyOCR</span>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-lg flex flex-col items-center">
+            <img src="https://tse3.mm.bing.net/th?id=OIP.LG6Eebzdawmcm6YQ4YbuEgHaHa&pid=Api&P=0&h=180" alt="PyTorch" class="h-12 mb-3">
+            <span class="text-gray-700 font-medium">PyTorch</span>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-lg flex flex-col items-center">
+            <img src="https://cdn.worldvectorlogo.com/logos/tailwindcss.svg" alt="Tailwind CSS" class="h-12 mb-3">
+            <span class="text-gray-700 font-medium">Tailwind CSS</span>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-lg flex flex-col items-center">
+            <img src="https://tse3.mm.bing.net/th?id=OIP.KuGKZvifHcP_-WIDKI_LZAHaIZ&pid=Api&P=0&h=180" alt="JavaScript" class="h-12 mb-3">
+            <span class="text-gray-700 font-medium">JavaScript</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 gradient-bg text-white">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6">Ready to Try Our ALPR System?</h2>
+        <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+          Experience the power of accurate license plate recognition with our easy-to-use platform
+        </p>
+        <a href="#demo" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold text-lg hover:bg-blue-50 transition duration-300 shadow-lg inline-block">
+          <i class="fas fa-play-circle mr-2"></i> Start Demo Now
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-12 pb-6">
+      <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <h3 class="text-xl font-bold mb-4 flex items-center">
+              <i class="fas fa-car mr-2 text-blue-400"></i> PlateRecognizer
+            </h3>
+            <p class="text-gray-400">
+              Advanced Automatic License Plate Recognition system powered by AI and EasyOCR technology.
+            </p>
+          </div>
+          <div>
+            <h4 class="font-semibold text-lg mb-4">Quick Links</h4>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-gray-400 hover:text-white transition">Home</a></li>
+              <li><a href="#features" class="text-gray-400 hover:text-white transition">Features</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition">Pricing</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition">API Docs</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold text-lg mb-4">Resources</h4>
+            <ul class="space-y-2">
+              <li><a href="#" class="text-gray-400 hover:text-white transition">Documentation</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition">Blog</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition">Support</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white transition">Community</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold text-lg mb-4">Contact</h4>
+            <ul class="space-y-2">
+              <li class="flex items-center">
+                <i class="fas fa-envelope text-gray-400 mr-2"></i>
+                <span>contact@platerecognizer.com</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-phone-alt text-gray-400 mr-2"></i>
+                <span>+1 (555) 123-4567</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-400 text-sm mb-4 md:mb-0">
+            &copy; 2023 PlateRecognizer. All rights reserved.
+          </p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white transition">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition">
+              <i class="fab fa-github"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition">
+              <i class="fab fa-linkedin"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Simple script for file upload dropzone
+      const dropzone = document.getElementById('dropzone');
+      const fileInput = document.getElementById('fileInput');
+      
+      dropzone.addEventListener('click', () => {
+        fileInput.click();
+      });
+      
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('border-blue-400', 'bg-blue-50');
+      });
+      
+      dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('border-blue-400', 'bg-blue-50');
+      });
+      
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('border-blue-400', 'bg-blue-50');
+        if (e.dataTransfer.files.length) {
+          fileInput.files = e.dataTransfer.files;
+        }
+      });
+    </script>
+  </body>
+</html>

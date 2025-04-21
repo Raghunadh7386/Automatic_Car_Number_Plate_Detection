@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 70% !important; /* Set a fixed width */
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px #aaa;
+            text-align: center; /* Center-align all text inside the container */
+        }
+        .image-box img {
+            width: 80%; /* Make images responsive to container width */
+            max-width: 500px; /* Limit the maximum size of images */
+            margin: 10px auto;
+            border-radius: 15px; /* Apply rounded corners to images */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+        }
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 15px;
+            text-decoration: none;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        a:hover {
+            background: #0056b3;
+        }
+        h1, h2, p {
+            text-align: center; /* Center-align headings and text */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><b>OCR Results</b></h1>
+
+        <h2><b>Detected Text:</b>
+        <span class="font-bold text-blue-600">{{ result }}</span>
+        </h2>
+
+        {% if uploaded_image and processed_image %}
+        <h2 class="mb-2 font-bold">Original & Processed Images:</h2>
+        <div class="grid grid-cols-2 gap-4 image-box">
+            <div>
+                <p class="font-semibold">Original Image:</p>
+                <img src="{{ url_for('static', filename='uploads/' + uploaded_image) }}" alt="Uploaded Image">
+            </div>
+            <div>
+                <p class="font-semibold">Processed Image:</p>
+                <img src="{{ url_for('static', filename='uploads/' + processed_image) }}" alt="Processed Image">
+            </div>
+        </div>
+        {% endif %}
+
+        {% if threshold_image and cropped_image %}
+        <h2 class="mt-6 mb-2 font-bold">Threshold & Cropped Plate:</h2>
+        <div class="grid grid-cols-2 gap-4 image-box">
+            <div>
+                <p class="font-semibold">Threshold Image:</p>
+                <img src="{{ url_for('static', filename='uploads/' + threshold_image) }}" alt="Threshold Image">
+            </div>
+            <div>
+                <p class="font-semibold">Cropped Number Plate:</p>
+                <img src="{{ url_for('static', filename='uploads/' + cropped_image) }}" alt="Cropped Plate">
+            </div>
+        </div>
+        {% endif %}
+
+        <br>
+        <a href="{{ url_for('index') }}">Upload Another Image</a>
+    </div>
+</body>
+</html>
